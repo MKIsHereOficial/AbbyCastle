@@ -16,6 +16,13 @@ app.use(bodyParser.urlencoded({extended: true}))  // Com essa configuração, va
 
 /////////////////////////////////////////////////////////////////////////
 
+app.get("/logged", async (req, res) => {
+  console.dir(req);
+  res.json(req.query);
+});
+
+/////////////////////////////////////////////////////////////////////////
+
 app.get('/:uid/dashboard', async (req, res) => {
     const userId = req.params['uid'];
 
