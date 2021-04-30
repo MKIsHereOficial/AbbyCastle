@@ -1,9 +1,13 @@
+require('dotenv').config();
+/////////////////////////////////////////////////////////////////////////
 const express = require('express'), app = express();
 
 const faker = require('faker')
 const bodyParser = require('body-parser')
 /////////////////////////////////////////////////////////////////////////
+
 const path = require('path');
+const passport = require('passport');
 
 const Database = require('./database');
 
@@ -15,6 +19,31 @@ app.use(bodyParser.urlencoded({extended: true}))  // Com essa configuração, va
 
 
 /////////////////////////////////////////////////////////////////////////
+
+var DiscordStrategy = require('passport-discord').Strategy;
+ 
+var scopes = ['identify', 'email', 'guilds'];
+ 
+passport.use(new DiscordStrategy({
+    clientID: process.env.CASTLE_CLIENT_ID,
+    clientSecret: process.env.CASTLE_CLIENT_SECRET,
+    callbackURL: process.env.CASTLE_CALLBACK_URI,
+    scope: scopes
+},
+function(accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({ discordId: profile.id }, function(err, user) {
+        return cb(err, user);
+    });
+}));
+
+/////////////////////////////////////////////////////////////////////////
+
+app.get('/auth/discord', passport.authenticate('discord'));
+app.get('/auth/discord/callback', passport.authenticate('discord', {
+    failureRedirect: '/'
+}), function(req, res) {
+    res.redirect('/logged') // Successful auth
+});
 
 app.get("/logged", async (req, res) => {
   console.dir(req);
