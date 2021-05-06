@@ -1,0 +1,18 @@
+<li>
+  <a title="<%= title %>">
+    <% if (iconName) { %>
+      <button><i class="material-icons-round" class="icon"><%= iconName %></i></button>
+    <% } %>
+    <% if (iconURL) { %>
+      <button><img src="<%= iconURL %>" alt="icon"></button>
+    <% } %>
+    <span class="tabTitle"><%= title %></span>
+  </a>
+
+  <script>
+    window.onload = () => {
+      var tab = document.querySelector('a[title="<%= title %>"]');
+      var tabs_Ref = document.querySelectorAll('[data-ref]');
+    }
+  </script>
+</li>

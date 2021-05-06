@@ -10,7 +10,10 @@ async function Database(databaseName = "default") {
     async function set(key = "", value) {
         const keyPath = `${database.path}/${key}`;
 
-        return await fetchData(`${keyPath}/set?value=${JSON.stringify(value)}`, {headers: {accept: 'application/json'}});
+        //console.log(value);
+        const a = await axios({method:'POST', url:`${keyPath}/set`, headers: {accept: 'application/json'}, data: JSON.stringify(value)}).catch(console.error);
+ 
+        return a.data;
 
         return {key, value};
     }

@@ -1,0 +1,17 @@
+<div id="trauma_container_<%= data.name %>" class="trauma_container">
+    <style>
+        @import url('./root.css');
+        #trauma_container_<%=  data.name %> {
+            width: 20rem;
+
+            display: flex;
+            justify-content: space-around; 
+            align-items: center;
+        }
+    </style>
+    
+    <label for="trauma_<%=  data.name %>"><%=  data.name %></label>
+    <div class="trauma_value">
+        <!-- <input value="<%=  data.value %>" type="number" name="trauma_<%=  data.name %>" id="trauma_<%=  data.name %>" > -->
+    </div>
+</div>

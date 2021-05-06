@@ -1,0 +1,62 @@
+:root {
+  --pwt-color: rgb(119, 255, 115);
+  --pwt-border-radius: .75rem;
+}
+.pwt:last-child {
+  --pwt-color: rgb(115, 141, 255);
+}
+.pwt {
+  width: 300px;
+  margin: 5px 0;
+}
+.pwt h1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pwt span > span:first-child {
+  color: var(--pwt-color);
+}
+.pwt progress {
+  width: 100%;
+  max-width: 100%;
+  max-height: 8px;
+
+  appearance: none;
+  
+  border-radius: var( --pwt-border-radius);
+  overflow: hidden;
+}
+.pwt progress::-webkit-progress-bar {
+  overflow: hidden;
+  background: rgba(255, 255, 255, .1);
+  backdrop-filter: blur(10px);
+
+  border-radius: var( --pwt-border-radius);
+  border: 1px solid rgba(255, 255, 255, .1);
+} 
+.pwt progress::-webkit-progress-value {
+  background: var(--pwt-color);
+  border-radius: var( --pwt-border-radius);
+}
+
+.editable.progress_value {
+  outline: none;
+  font-family: 'Poppins', 'Roboto', Arial, sans-serif;
+  appearance: none;
+
+  background: none; border: none;
+  color: var(--pwt-color);
+
+  padding: 0;
+  margin: 0;
+
+  max-width: 60px;
+  font-size: 2rem;
+
+  text-align: end;
+
+}
+.editable.progress_value::-webkit-inner-spin-button {
+  display: none;
+}

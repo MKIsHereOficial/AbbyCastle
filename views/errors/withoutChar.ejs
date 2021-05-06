@@ -1,0 +1,120 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+    <title>Sem Personagem - Castelo da Abby</title>
+
+    <link rel="stylesheet" href="../root.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous"></script>
+
+    <style>
+      * {
+        font-family: 'Poppins', Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html, body {
+        background: black;
+        color: #eee;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        text-align: center;
+      }
+
+      .createCharacterButton {
+        border-radius: 5px;
+        border: none;
+        color: var(--main-color);
+        background: transparent;
+      }
+      .createCharacterButton:hover {
+        text-shadow: 0 0 5px var(--main-color),
+        -1px 1px 5px black,
+        1px -1px 5px white;
+      }
+    </style>
+
+
+</head>
+<body>
+  <div class="container">
+    <h1 class="errorTitle">Opa! Esse id não têm personagem!</h1>
+    <h2 class="createCharacter">Deseja <button class="createCharacterButton"><h2>Criar</h2></button> seu Personagem??</h2>
+  
+    <div id="charCreation">
+      <form>
+        <input value="Zé da Paçoca" name="name" />
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const button = document.querySelector(".createCharacterButton");
+    const charNameInput = document.querySelector("input[name=name]");
+    var charName = "";
+    
+    if (sessionStorage.getItem("W-charName")) {
+      charName = sessionStorage.getItem("W-charName");
+      charNameInput.value = charName;
+    }
+
+      charNameInput.onchange = (e) => {
+        //char.name = e.target.value;
+        charName = e.target.value;
+        sessionStorage.setItem("W-charName", charName);
+
+      }
+
+    button.onclick = async () => {
+      const id = "<%= id %>";
+
+
+
+      var char = {
+        attrs: [
+          { name: 'Força', value: 0 },
+          { name: 'Destreza', value: 0 },
+          { name: 'Poder', value: 0 },
+          { name: 'Inteligência', value: 0 },
+          { name: 'Tamanho', value: 0 },
+          { name: 'Constituição', value: 0 },
+          { name: 'Educação', value: 0 },
+          { name: 'Movimento', value: 0 },
+          { name: 'Aparência', value: 0 }
+        ],
+        inventory: [],
+        traumas: [],
+        hp: {value: 0, max: 0},
+        sanity: {value: 0, max: 0}
+      }
+      
+
+      char.name = charNameInput.value;
+      char.id = id;
+
+      const url = `https://abbydb.mkishereoficial.repl.co/database/chars/${id}/set`;
+
+      console.log(url)
+      console.log("Character", char);
+
+      char = JSON.stringify(char);
+
+      await axios({url, method: 'POST', data: char, contentType: 'application/json'}).then((r) => {
+        if (r.data) {
+          window.location.href = `/${id}/dashboard`;
+        }
+      });
+
+
+    }
+  </script>
+</body>
+</html>

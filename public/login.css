@@ -1,0 +1,57 @@
+@import url('./root.css');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  font-family: "Poppins", Arial, sans-serif;
+}
+
+html, body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  font-size: 1.45rem;
+}
+
+.loginButton button {
+  color: var(--main-color);
+  background: transparent;
+  backdrop-filter: blur(10px);
+
+  border-radius: 10rem;
+  border: .75px solid var(--main-color);
+
+
+  position: fixed;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 50%;
+  height: 5rem;
+
+  font-size: 1.35rem;
+
+  transition: 300ms ease;
+}
+
+.loginButton button:hover {
+  border: 3px solid var(--main-color);
+  transform: translateX(-50%)scale(1.15);
+}
+
+.loginButton button:active {
+  border: 3px solid var(--main-color);
+  transform: translateX(-50%) scale(0.75);
+}

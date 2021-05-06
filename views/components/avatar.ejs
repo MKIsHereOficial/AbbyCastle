@@ -1,0 +1,53 @@
+<div class="avatar">
+	<img src="<%= char.avatar %>" alt="<%= char.name %>" class="avatarIcon">
+    <h1 class="avatarName"><%= char.name %></h1>
+      <input type="file"
+        id="avatarFile" name="avatarFile"
+        accept="image/png, image/jpeg">
+    <script>
+        var onload = () => {
+            const container = document.querySelector('.avatar');
+
+            /////////////////////////////////////////////////////////////////////////////
+
+            const name = container.querySelector('.avatarName');
+
+
+            container.onmouseenter = () => {
+                name.classList.add('hover');
+            }
+            container.onmouseleave = () => {
+                name.classList.remove('hover');
+            }
+
+            /////////////////////////////////////////////////////////////////////////////
+
+            const avatarFile = container.querySelector('#avatarFile');
+
+            container.querySelector('.avatarIcon').onclick = () => {
+              $(avatarFile).click();
+            }
+
+            function readURL(input) {
+              if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                
+                reader.onload = function(e) {
+                  const ref = firebaseStorage.refFromURL(`gs://abbythebot-b5876.appspot.com/avatars/<%= char.id %>.txt`);
+                  ref.putString(e.target.result);
+                  $('.avatarIcon').attr('src', e.target.result);
+                }
+                
+                reader.readAsDataURL(input.files[0]); // convert to base64 string
+              }
+            }
+
+            $(avatarFile).change(function() {
+              readURL(this);
+            });
+          }
+
+          onload();
+
+    </script>
+</div>

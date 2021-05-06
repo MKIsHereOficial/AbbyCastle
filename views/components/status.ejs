@@ -1,17 +1,17 @@
-<div class="status_container_<%= name %> status_container">
+<div id="status_container_<%= data.name %>" class="status_container">
     <style>
         @import url('./root.css');
-        .status_container_<%= name %> {
+        #status_container_<%=  data.name %> {
             width: 20rem;
 
             display: flex;
             justify-content: space-around; 
             align-items: center;
         }
-        .status_container_<%= name %> .status_value {
+        #status_container_<%=  data.name %> .status_value {
             margin-left: auto;
         }
-        .status_container_<%= name %> input[type="number"] {
+        #status_container_<%=  data.name %> input[type="number"] {
             max-width: 100px;
             outline: none;
             text-align: center;
@@ -19,7 +19,7 @@
             border: 0.1px solid var(--main-color);
 
         }
-        .status_container_<%= name %> input[type="number"]:hover {
+        #status_container_<%=  data.name %> input[type="number"]:hover {
             border: 1px solid var(--main-color);
     
             box-shadow: 0px 0px 2.5px var(--main-color),
@@ -27,7 +27,7 @@
             1px 0px 2.5px var(--main-color);
         }
     
-        .status_container_<%= name %> input[type="number"]::-webkit-inner-spin-button {
+        #status_container_<%=  data.name %> input[type="number"]::-webkit-inner-spin-button {
             display: none;
         }
 
@@ -42,8 +42,9 @@
 
     </style>
     
-    <label for="status_<%= name %>"><%= name %></label>
+    <label for="status_<%=  data.name %>"><%=  data.name %></label>
     <div class="status_value">
-        <input value="<%= value %>" type="number" name="status_<%= name %>" id="status_<%= name %>">
+        <input value="<%=  data.value %>" type="number" name="status_<%=  data.name %>" id="status_<%=  data.name %>" >
+        <h1 class="<%=  data.name %>_roll"></h1>
     </div>
 </div>

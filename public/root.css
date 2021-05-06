@@ -2,4 +2,6 @@
 
 :root {
     --main-color: rgb(255,215,0);
+    --bg-primary: black;
+    --text-primary: #eee;
 }

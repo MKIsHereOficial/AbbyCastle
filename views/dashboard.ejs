@@ -9,41 +9,73 @@
     <link rel="stylesheet" href="../dashboard.css">
 
     <script src="../dashboard.js" defer></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-storage.js"></script>
+
+    <script>
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      var firebaseConfig = {
+        apiKey: "AIzaSyD8E9hZV0D_zgQJZu9oB92a17oFWvaNU5g",
+        authDomain: "abbythebot-b5876.firebaseapp.com",
+        databaseURL: "https://abbythebot-b5876-default-rtdb.firebaseio.com",
+        projectId: "abbythebot-b5876",
+        storageBucket: "abbythebot-b5876.appspot.com",
+        messagingSenderId: "133999644329",
+        appId: "1:133999644329:web:6084802693094f06b7e3b8",
+        measurementId: "G-TSWWF4GD3Y"
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      firebase.analytics();
+
+      var firebaseStorage = firebase.storage();
+    </script>
 </head>
 <body>
-    <div class="container">
+    <div class="container" data-ref="Atributos">
         <form class="status" name="status" method="POST">
             <h1>Atributos</h1>
-            <h3>Total: <%= attrsTotal %></h3>
-            <% if (attrs) { %>
-                <% attrs.map(data => { %>
-                    <%- include('components/status', data); %>
+            <% if (char.attrsTotal) { %>
+              <h3>Total: <%= char.attrsTotal %></h3>
+            <% } %>
+            <% if (char.attrs) { %>
+                <% char.attrs.map(data => { %>
+                    <%- include('components/status', {data, randomInt}); %>
                 <% }) %>
             <% } %>
             <button type="submit" id="saveButton">Salvar</button>
         </form>
     </div>
+          
 
     <div class="header-container">
-        <div class="avatar">
-            <img src="<%= avatar %>" alt="<%= name %>" class="avatarIcon">
-            <h1 class="avatarName"><%= name %></h1>
-            <script>
-                window.onload = () => {
-                    const container = document.querySelector('.avatar');
-                    const name = document.querySelector('.avatarName');
-
-
-                    container.onmouseenter = () => {
-                        name.classList.add('hover');
-                    }
-                    container.onmouseleave = () => {
-                        name.classList.remove('hover');
-                    }
-                }
-            </script>
-        </div>
+        <%- include("components/avatar", {char}) %>
     </div>
+
+    
+    <div class="f_views">
+      <form class="f_viewsForm" name="f_viewsForm" method="POST">
+        <%- include('components/progressWithTitle', {cls: 'progress_hp', name: 'HP', max: char.hp.max, value: char.hp.value, color: "rgb(119, 255, 115)"}) %>
+        <%- include('components/progressWithTitle', {cls: 'progress_san', name: 'Sanidade', max: char.sanity.max, value: char.sanity.value, color: "rgb(115, 141, 255)"}) %>
+        <button type="submit" id="saveButton">Salvar</button>
+      </form>
+    </div>
+
+    <div class="footer-container">
+      <ul>
+        <%- include("components/tab", {title: 'Atributos', iconURL: false, iconName: false, url: `https://abbycastle.mkishereoficial.repl.co/${char.id}/dashboard#attrs`}) %>
+      </ul>
+    </div>
+
 
 </body>
 </html>
