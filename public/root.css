@@ -4,4 +4,39 @@
     --main-color: rgb(255,215,0);
     --bg-primary: black;
     --text-primary: #eee;
+    font-family: 'Poppins', 'Roboto', Arial, sans-serif;
+}
+
+.windowAlert {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(39, 33, 0, 0.35);
+  backdrop-filter: blur(10px);
+  color: #eee;
+
+  padding: 2vh 2vw;
+  min-height: 25vh;
+  min-width: 50vw;
+  font-size: 2rem;
+  border-radius: .75rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  transition: transform 500ms ease, top 500ms ease, opacity 500ms ease;
+
+  pointer-events: none;
+
+  z-index: 1000;
+
+  white-space:pre-wrap;
+}
+.windowAlert.vanish {
+  transform: translate(-50%, 0);
+  top: -50vh;
+  opacity: 0;
 }

@@ -1,9 +1,11 @@
 require('dotenv').config();
 /////////////////////////////////////////////////////////////////////////
+
 const express = require('express'), app = express();
 
 const faker = require('faker')
 const bodyParser = require('body-parser')
+
 /////////////////////////////////////////////////////////////////////////
 
 const random = require('random');
@@ -14,6 +16,8 @@ const passport = require('passport');
 const Database = require('./database');
 
 const {fetchUser, fetchURL} = require('./utils');
+
+const bot = require('./bot');
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -82,13 +86,14 @@ async function(accessToken, refreshToken, profile, done) {
 app.get('/auth/discord', passport.authenticate('discord'));
 app.get('/logged', passport.authenticate('discord', {
     failureRedirect: '/',
-    session: false
+    session: true
 }), async function(req, res) {
     const accessToken = req.query['code'] || false;
 
     var user;
     if (accessToken) {
       user = req.user;
+      console.log(`[${req.user}]`, 'logou-se');
     }
     res.render(`utils/redirect`, {url: `https://abbycastle.mkishereoficial.repl.co/${user.id}/dashboard`}) // Successful auth
 });
@@ -101,6 +106,17 @@ app.get('/', async (req, res) => {
   res.render('index');
 });
 
+
+/////////////////////////////////////////////////////////////////////////
+
+const botClient = bot(app);
+
+app.get('/thanks', async (req, res) => {
+  res.send("Obrigada por me adicionar!");
+})
+
+app.get(botClient.LOGSPATH, botClient.LOGSGET);
+app.post(botClient.LOGSPATH, botClient.LOGSPOST);
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -142,10 +158,12 @@ app.get('/:uid/dashboard', async (req, res) => {
 
         var avatar = `https://firebasestorage.googleapis.com/v0/b/abbythebot-b5876.appspot.com/o/avatars%2F${char.id}.txt?alt=media&token=75d800d3-fe15-4f39-894b-5333126dd696`;
         
-        avatar = await fetchURL(avatar);
+        await fetchURL(avatar).catch(console.error(`Não foi possível localizar o URL. [${char.id}]`)).then(data => {
+          avatar = data;
+        });
         
         
-        if (avatar.err) return console.error(avatar);
+        if (avatar.err) console.error(`O Avatar não foi encontrado na Storage. [${char.id}]`);
 
         if (avatar.data) {
           avatar = avatar.data;
@@ -153,10 +171,21 @@ app.get('/:uid/dashboard', async (req, res) => {
         }
       };
 
-    char.hp.max = parseInt((char.attrs.find(a => a.name === "Tamanho").value + char.attrs.find(a => a.name === "Constituição").value) / 2) || 0;
+    //char.hp.max = parseInt((char.attrs.find(a => a.name === "Tamanho").value + char.attrs.find(a => a.name === "Constituição").value) / 2) || 0;
     char.sanity.max = parseInt(char.attrs.find(a => a.name === "Poder").value * 5);
 
-    res.render('dashboard', {char, randomInt: random.float});
+    var expertise = [];
+    if (char.expertise) {
+      char.expertise.map(data => {
+        if (char.expertise.indexOf(data) <= 12) expertise.push(data);
+      })
+
+      char.expertise = expertise;
+    }
+
+    //console.log(char.expertise);
+
+    res.render('dashboard', {char});
 });
 
 app.post('/:uid/dashboard', async (req, res) => {
@@ -178,7 +207,11 @@ app.post('/:uid/dashboard', async (req, res) => {
       char.attrs.map(data => {
         var dataName = `status_${data.name}`;
 
-        var dataValue = parseFloat(body[dataName]);
+        var dataValue = parseInt(body[dataName]);
+
+        if (dataValue != data.value) {
+          botClient.log(`[${char.id}/${char.name}]: Atributo "${data.name}" alterado para ${dataValue}`, {title: `[${char.id}/${char.name}]`, body: `Atributo "${data.name}" alterado para ${dataValue}`});
+        }
 
         attrs.push({name: data.name, value: dataValue});
       });
@@ -186,11 +219,86 @@ app.post('/:uid/dashboard', async (req, res) => {
       char.attrs = attrs;
     } 
     if (body['progress_hp']) {
-      char.hp.value = parseInt(body['progress_hp']);
+      if (char.hp.value != parseInt(body['progress_hp'])) {
+        char.hp.value = parseInt(body['progress_hp']);
+        botClient.log(`[${char.id}/${char.name}]: HP alterado para ${char.hp.value}`, {title: `[${char.id}/${char.name}]`, body: `HP alterado para ${char.hp.value}`});
+      }
     } 
     if (body['progress_san']) {
-      char.sanity.value = parseInt(body['progress_san']);
+      if (char.sanity != parseInt(body['progress_san'])) {
+        char.sanity.value = parseInt(body['progress_san']);
+        botClient.log(`[${char.id}/${char.name}]: Sanidade alterada para ${char.sanity.value}`, {title: `[${char.id}/${char.name}]`, body: `Sanidade alterada para ${char.sanity.value}`});
+      }
     }
+
+    var expertise = [];
+
+    if (char.expertise && body['expertise_name']) {
+      if (body['expertise_name'].length > 0) {
+        //console.log(body['expertise_name']);
+        expertise.push({name: body['expertise_name'], value: 1});
+        botClient.log(`[${char.id}/${char.name}]: Perícia "${body['expertise_name']}" adicionada`, {title: `[${char.id}/${char.name}]`, body: `Perícia "${body['expertise_name']}" adicionada`});
+      }
+    }
+
+    function checkIfHasOneExpertise(expertise = char.expertise) {
+      const keys = Object.keys(body);
+
+      if (keys[0] === 'expertise_name') keys.shift();
+
+      var keysReturn = [];
+      var output = 0;
+
+      for (var i = 0; i < keys.length; i++) {
+        if (body[keys[i]]) {
+          keysReturn.push(1)
+        } else {
+          keysReturn.push(0);
+        }
+      }
+
+      keysReturn.map(val => {
+        output += val;
+      })
+
+      output = (output > 0) ? true : false;
+
+      return output;
+
+    }
+
+    if (char.expertise && checkIfHasOneExpertise()) {
+      var __expertise__ = char.expertise.map(data => {
+        var dataName = `expertise_${data.name.split(" ").join("").replace("(", "").replace(")", "")}`;
+
+        if (!body[dataName] && !body['expertise_name']) return;
+        if (["deleted", "deletar", "delete", "apaga", "apagar"].join(" ").includes(body[dataName])) return;
+
+        var dataValue = parseInt(body[dataName]);
+        //console.log(isNaN(dataValue), dataValue);
+
+        //console.log(body);
+
+        if (!dataValue || isNaN(dataValue)) {
+          //console.log(isNaN(dataValue), dataValue);
+          dataValue = 1;
+        }
+
+        if (dataValue != data.value) {
+          botClient.log(`[${char.id}/${char.name}]: Perícia "${data.name}" alterada para ${dataValue}`, {title: `[${char.id}/${char.name}]`, body: `Perícia "${data.name}" alterada para ${dataValue}`});
+        }
+
+        if (char.expertise.indexOf(data) <= 12) expertise.push({name: data.name, value: dataValue});
+
+        
+        char.expertise = expertise;
+
+      });
+
+    } 
+    
+    if (body['expertise_name']) char.expertise = expertise;
+
     var attrsTotal = 0;
 
     if (char.attrs) {char.attrs.map(data => {
@@ -211,13 +319,18 @@ app.post('/:uid/dashboard', async (req, res) => {
     
     char.hp.max = parseInt((char.attrs.find(a => a.name === "Tamanho").value + char.attrs.find(a => a.name === "Constituição").value) / 2) || 0;
     char.sanity.max = parseInt(char.attrs.find(a => a.name === "Poder").value * 5);
+
+    if (char.hp && char.hp.max && body['progress_hp_max'] && body['progress_hp_max'] != char.hp.max) {
+      console.log(char.hp.max, body['progress_hp_max'])
+      char.hp.max = parseInt(body['progress_hp_max']);
+    }
     
     char = await chars.set(userId, char);
     char = char.value;
 
     //console.log(char);
 
-    res.render('dashboard', {char, randomInt: random.float});
+    res.redirect(`https://abbycastle.mkishereoficial.repl.co/${char.id}/dashboard`);
 });
 
 /////////////////////////////////////////////////////////////////////////

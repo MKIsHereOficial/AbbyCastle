@@ -1,0 +1,91 @@
+html, body {
+  color: #eee;
+  background: black;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+
+  overflow: hidden;
+}
+
+.container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
+  height: 100%;
+}
+.logs {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+
+  overflow-y: scroll;
+}
+
+.logs::-webkit-scrollbar {
+  width: .50rem;
+}
+.logs::-webkit-scrollbar-track {
+  background: transparent;
+}
+.logs::-webkit-scrollbar-thumb {
+  background: rgba(117, 117, 117, .65);
+  border-radius: 1rem;
+}
+
+.logs > .logContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.logs > .logContainer > .content {
+  position: relative;
+  padding: .75rem;
+  background: rgba(255, 255, 255, .1);
+}
+.logs > .logContainer > .after {
+  content: '';
+  margin: 1.75rem 0;
+  width: 50vw;
+  height: 1vh !important;
+  border-radius: .75rem;
+  background: var(--main-color);
+}
+
+/*/////////////////////////////////////////////////////////////////// */
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+tr:first-child {
+  border: 1px solid var(--main-color);
+}
+tr:not(:first-child):not(:last-child) {
+  border: 1px solid var(--main-color);
+  border-top: none;
+  border-bottom: none;
+}
+tr:last-child{
+  border: 1px solid var(--main-color);
+  border-top: none;
+}
+
+td, th {
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) td {
+  background: rgba(117, 117, 117, .25);
+  backdrop-filter: blur(1px)
+}

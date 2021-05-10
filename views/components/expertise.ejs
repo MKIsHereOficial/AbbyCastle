@@ -1,16 +1,16 @@
-<div id="status_container_<%= data.name %>" class="status_container">
+<div id="expertise_container_<%= data.name.split(" ").join("").replace("(", "").replace(")", "") %>" class="expertise_container">
     <style>
-        #status_container_<%=  data.name %> {
+        #expertise_container_<%=  data.name.split(" ").join("").replace("(", "").replace(")", "") %> {
             width: 20rem;
 
             display: flex;
             justify-content: space-around; 
             align-items: center;
         }
-        #status_container_<%=  data.name %> .status_value {
+        #expertise_container_<%=  data.name.split(" ").join("").replace("(", "").replace(")", "") %> .expertise_value {
             margin-left: auto;
         }
-        #status_container_<%=  data.name %> input[type="number"] {
+        #expertise_container_<%=  data.name.split(" ").join("").replace("(", "").replace(")", "") %> input[name="expertise_<%=  data.name.split(" ").join("").replace("(", "").replace(")", "") %>"] {
             max-width: 100px;
             outline: none;
             text-align: center;
@@ -18,7 +18,7 @@
             border: 0.1px solid var(--main-color);
 
         }
-        #status_container_<%=  data.name %> input[type="number"]:hover {
+        #expertise_container_<%=  data.name.split(" ").join("").replace("(", "").replace(")", "") %> input[name="expertise_<%=  data.name.split(" ").join("").replace("(", "").replace(")", "") %>"]:hover {
             border: 1px solid var(--main-color);
     
             box-shadow: 0px 0px 2.5px var(--main-color),
@@ -26,11 +26,11 @@
             1px 0px 2.5px var(--main-color);
         }
     
-        #status_container_<%=  data.name %> input[type="number"]::-webkit-inner-spin-button {
+        #expertise_container_<%=  data.name.split(" ").join("").replace("(", "").replace(")", "") %> input[name="expertise_<%=  data.name.split(" ").join("").replace("(", "").replace(")", "") %>"]::-webkit-inner-spin-button {
             display: none;
         }
 
-        .status_value {
+        .expertise_value {
           display: flex;
           justify-content: center;
           align-items: center;
@@ -46,7 +46,7 @@
             height: var(--size);
         }
 
-        .<%=  data.name %>_roll {
+        .<%=  data.name.split(" ").join("").replace("(", "").replace(")", "") %>_roll {
           border-radius: .45rem;
           background: transparent;
 
@@ -58,43 +58,46 @@
 
     </style>
     
-    <label for="status_<%=  data.name %>"><%=  data.name %></label>
-    <div class="status_value">
+    <label for="expertise_<%=  data.name.split(" ").join("").replace("(", "").replace(")", "") %>"><%=  data.name %></label>
+    <div class="expertise_value">
     
-        <% if (data.name != "Preparo" && true) { %>
-          <div class="<%=  data.name %>_roll">[ROLAR]</div>
+        <% if (true) { %>
+          <div class="<%=  data.name.split(" ").join("").replace("(", "").replace(")", "") %>_roll">[ROLAR]</div>
         <% } %>
 
         
-        <input value="<%=  data.value %>" type="number" name="status_<%=  data.name %>" id="status_<%=  data.name %>" >
+        <input value="<%=  data.value %>" name="expertise_<%=  data.name.split(" ").join("").replace("(", "").replace(")", "") %>" id="expertise_<%=  data.name.split(" ").join("").replace("(", "").replace(")", "") %>" >
 
     </div>
 
     <script>
-      var onload = async () => {
-        const rollButton = document.querySelector('.<%=  data.name %>_roll');
-        const val = document.querySelector('#status_<%=  data.name %>');
+      var onload = () => {
+        const container = document.querySelector(`#expertise_container_<%= data.name.split(" ").join("").replace("(", "").replace(")", "") %>`);
+        const label = document.querySelector(`label[for="expertise_<%=  data.name.split(" ").join("").replace("(", "").replace(")", "") %>"]`);
+        const rollButton = document.querySelector('.<%=  data.name.split(" ").join("").replace("(", "").replace(")", "") %>_roll');
+        const val = document.querySelector('#expertise_<%=  data.name.split(" ").join("").replace("(", "").replace(")", "") %>');
 
+        var deleted = false;
 
         val.onchange = () => {
-          minMax();
+          if (!deleted) minMax();
         }
 
         function minMax() {
           const value = parseInt(val.value);
           const [minValue, maxValue] = [1, 20];
-
+          
           if (value > maxValue) {
             val.value = maxValue;
           } else if (value < minValue) {
             val.value = minValue;
           }
         }
-        
-        if (rollButton) {
+        if (rollButton && !deleted) {
           //const defaultText = rollButton.textContent;
 
           rollButton.onclick = async () => {
+            if (deleted) return;
             const value = random.integer(1, 20);
 
             const al = document.createElement('h1');
@@ -158,22 +161,24 @@
                   success = [value, "Falha"];
                 }
 
-                al.textContent = success.join("\n");
 
                 var onBot = {
                   title: '[<%= charId %>/<%= charName %>]',
-                  body: `Atributo: <%= data.name %>, Valor: ${val.value}\nValor do roll: ` + success.join(", "), 
+                  body: `Perícia: <%= data.name %>, Valor: ${val.value}\nValor do roll: ` + success.join(", "), 
                 }
-                var onSite = `Atributo: <%= data.name %>, Valor: ${val.value}; Valor do roll: ` + success.join(", ");
+                var onSite = `Perícia: <%= data.name %>, Valor: ${val.value}; Valor do roll: ` + success.join(", ");
 
                 console.log(onBot, onSite);
 
                 onBot = JSON.stringify(onBot);
 
+                console.log('<%= data.name %>', val.value);
+
                 await axios.get(`https://abbycastle.mkishereoficial.repl.co/logs?onSite=${onSite}&onBot=${onBot}`).catch(console.error).then(console.dir);
               }
             });
 
+            al.textContent = success.join("\n");
 
             document.body.appendChild(al);
             setTimeout(() => {

@@ -10,7 +10,11 @@
 
     <script src="../dashboard.js" defer></script>
 
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
 
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-app.js"></script>
@@ -39,6 +43,16 @@
 
       var firebaseStorage = firebase.storage();
     </script>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/random-js/1.0.8/random.min.js" integrity="sha512-C/21kASTZDv173aY5ERBPWuV9JVne9nhII/ZA7NIGhuPVCtGK5WnD6wzQ7dlQajXvu3003cojqouByxh+Fh3kg==" crossorigin="anonymous"></script>
+    <script>
+      window.random = new Random();
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous"></script>
+
 </head>
 <body>
     <div class="container" data-ref="Atributos">
@@ -49,12 +63,31 @@
             <% } %>
             <% if (char.attrs) { %>
                 <% char.attrs.map(data => { %>
-                    <%- include('components/status', {data, randomInt}); %>
+                    <%- include('components/status', {data, charId: char.id, charName: char.name}); %>
                 <% }) %>
             <% } %>
             <button type="submit" id="saveButton">Salvar</button>
         </form>
     </div>
+    
+    <% if (char.expertise) { %><div class="container" data-ref="Perícias">
+        <form class="expertise" name="expertise" method="POST">
+            <h1>Perícias</h1>
+            <% if (false) { %>
+              <h3>Total: <%= char.attrsTotal %></h3>
+            <% } %>
+            <div id="expertiseCreate">
+              <label for="expertise_name">Criar</label>
+              <input type="text" name="expertise_name"/>
+            </div>
+            <% if (char.expertise) { %>
+                <% char.expertise.map(data => { %>
+                    <%- include('components/expertise', {data, charId: char.id, charName: char.name}); %>
+                <% }) %>
+            <% } %>
+            <button type="submit" id="saveButton">Salvar</button>
+        </form>
+    </div><% } %>
           
 
     <div class="header-container">
@@ -64,17 +97,19 @@
     
     <div class="f_views">
       <form class="f_viewsForm" name="f_viewsForm" method="POST">
-        <%- include('components/progressWithTitle', {cls: 'progress_hp', name: 'HP', max: char.hp.max, value: char.hp.value, color: "rgb(119, 255, 115)"}) %>
-        <%- include('components/progressWithTitle', {cls: 'progress_san', name: 'Sanidade', max: char.sanity.max, value: char.sanity.value, color: "rgb(115, 141, 255)"}) %>
+        <%- include('components/progressWithTitle', {max_editable: true, cls: 'progress_hp', name: 'HP', max: char.hp.max, value: char.hp.value, color: "rgb(119, 255, 115)"}) %>
+        <%- include('components/progressWithTitle', {max_editable: false, cls: 'progress_san', name: 'Sanidade', max: char.sanity.max, value: char.sanity.value, color: "rgb(115, 141, 255)"}) %>
         <button type="submit" id="saveButton">Salvar</button>
       </form>
     </div>
 
+    <% if (false) { %>
     <div class="footer-container">
       <ul>
         <%- include("components/tab", {title: 'Atributos', iconURL: false, iconName: false, url: `https://abbycastle.mkishereoficial.repl.co/${char.id}/dashboard#attrs`}) %>
       </ul>
     </div>
+    <% } %>
 
 
 </body>

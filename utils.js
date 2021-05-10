@@ -2,8 +2,7 @@ const axios = require('axios').default;
 
 module.exports = {
   fetchURL: async (url) => {
-    var data = false;
-    var err;
+    var data, err;
     
     
     await axios.get(url).catch(e => {err = e}).then((r, err) => {

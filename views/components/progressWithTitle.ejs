@@ -1,21 +1,36 @@
 <div class="pwt <%= cls %>" style="--pwt-color: <%= color %>;">
     <link rel="stylesheet" href="../pwt.css" />
-    <h1 class="title"><%= name %> <span class="extras"><input type="number" class="editable progress_value" value="<%= value %>" name="<%= cls %>" />/<span class="noneditable progress_max"><%= max %></span></span></h1>
+    <h1 class="title"><%= name %> <span class="extras">
+    <input type="number" class="editable progress_value" value="<%= value %>" name="<%= cls %>" />
+    /
+    <% if (!max_editable) { %>
+      <span class="noneditable progress_max"><%= max %></span>
+    <% } %>
+    <% if (max_editable) { %>
+      <input class="editable progress_max" value="<%= max %>" type="number" name="<%= cls %>_max" />
+    <% } %>
+    </span></h1>
     <progress value="<%= value %>" max="<%= max %>" min="0"></progress>
 
     <script>
       var onload = () => {
-        const max = <%= max %>;
-
         const container = document.querySelector(".pwt.<%= cls %>");
+        const max = (<%= max_editable %>) ? container.querySelector(".editable.progress_max") : <%= max %>;
+
+        if (isNaN(max) && max.onchange) {
+          max.onchange = () => {
+            console.log(max.value);
+          }
+        }
+
         const val = container.querySelector(".editable.progress_value");
         const pr = container.querySelector('progress');
-        if (val.value > max) {pr.value = max; val.value = max}
+        //if (val.value > max) {pr.value = max; val.value = max}
 
-        console.log(val);
+        //console.log(val);
 
         pr.onchange = () => {
-          if (pr.value > max) {pr.value = max; val.value = max}
+          //if (pr.value > max) {pr.value = max; val.value = max}
         }
       }
 

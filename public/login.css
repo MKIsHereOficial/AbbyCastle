@@ -43,7 +43,7 @@ html, body {
 
   font-size: 1.35rem;
 
-  transition: 300ms ease;
+  transition: transform 380ms ease, border 200ms ease;
 }
 
 .loginButton button:hover {
